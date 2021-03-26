@@ -1,0 +1,206 @@
+# Code written to make figures used in thesis 
+
+
+# STEP 1: Define the multiTF regions:
+mergePeaks -d 300 -code -venn VennFile.txt -matrix PairwsieMatrix F_GATA4Summit200.bed F_MEF2ASummit200.bed F_MEF2CSummit200.bed F_NKX2_5Summit200.bed F_SRFSummit200.bed F_TEAD1Summit200.bed F_TBX5Summit200.bed > unionFetalTFregions.txt
+pos2bed.pl unionFetalTFregions.txt > unionFetalTFregions.bed
+
+mergePeaks -d 300 -code -venn VennFile.txt -matrix PairwsieMatrix A_GATA4Summit200.bed A_MEF2ASummit200.bed A_NKX2_5Summit200.bed A_SRFSummit200.bed A_TEAD1Summit200.bed A_TBX5Summit200.bed > unionAdultTFregions.txt
+pos2bed.pl unionAdultTFregions.txt > unionAdultTFregions.bed
+
+# opened output files in excel and sorted by number of TFs in each region (added up the binary)
+# example: 1011010  --> sum = # different TFs = 4 TFs
+# defined fetal multiTF as having >= 5 TFs, adult multiTF as having >= 4 TFs
+# defined fetal non-multiTF as having < 5 TFs, adult multiTF as having < 4 TFs
+# sort the unionFetalTFregions.txt and unionAdultTFregions file according to number of TFs (greatest to least) in excel 
+# make files for each number of TFs
+
+
+# Convert output files from mergePeaks to BED files 
+### FETAL
+pos2bed.pl unionFetalTFregions_sorted.txt > unionFetalTFregions_sorted.bed
+
+pos2bed.pl F_7TFs_mergedpeaks.txt > F_7TFs_mergedpeaks.bed
+
+pos2bed.pl F_6TFs_mergedpeaks.txt > F_6TFs_mergedpeaks.bed
+
+pos2bed.pl F_5TFs_mergedpeaks.txt > F_5TFs_mergedpeaks.bed
+
+pos2bed.pl F_4TFs_mergedpeaks.txt > F_4TFs_mergedpeaks.bed
+
+pos2bed.pl F_3TFs_mergedpeaks.txt > F_3TFs_mergedpeaks.bed
+
+pos2bed.pl F_2TFs_mergedpeaks.txt > F_2TFs_mergedpeaks.bed
+
+pos2bed.pl F_1TF_mergedpeaks.txt > F_1TF_mergedpeaks.bed
+
+pos2bed.pl F_1_2TFs_sorted.txt > F_1_2TFs_sorted.bed # fetal regions bound by 1-2 TFs
+
+pos2bed.pl F_3_4TFs_sorted.txt > F_3_4TFs_sorted.bed # fetal regions bound by 3-4 TFs
+
+pos2bed.pl F_multiTFs_sorted.txt > F_multiTFs_sorted.bed # fetal regions bound by 5 or more TFs
+
+
+### ADULT
+pos2bed.pl unionAdultTFregions_sorted.txt > unionAdultTFregions_sorted.bed
+
+pos2bed.pl A_1TF_mergedpeaks.txt > A_1TF_mergedpeaks.bed
+
+pos2bed.pl A_2TFs_mergedpeaks.txt > A_2TFs_mergedpeaks.bed
+
+pos2bed.pl A_3TFs_mergedpeaks.txt > A_3TFs_mergedpeaks.bed
+
+pos2bed.pl A_4TFs_mergedpeaks.txt > A_4TFs_mergedpeaks.bed
+
+pos2bed.pl A_5TFs_mergedpeaks.txt > A_5TFs_mergedpeaks.bed
+
+pos2bed.pl A_6TFs_mergedpeaks.txt > A_6TFs_mergedpeaks.bed
+
+pos2bed.pl A_2_3TFs_sorted.txt > A_2_3TFs_sorted.bed # contains fetal regions bound by 2-3 TFs
+
+pos2bed.pl A_multiTFs_sorted.txt > A_multiTFs_sorted.bed # contains adult regions bound by 4 or more TFs
+
+
+
+
+
+
+# STEP 2: separate distal from proximal regions
+# for fetal data
+sbcompute4.4 --wrap="bedtools intersect -a F_1TF_mergedpeaks.bed -b promoters.bed -wao -v > F_1TF_distal_mergedpeaks.bed"
+sbcompute4.4 --wrap="bedtools intersect -a F_2TFs_mergedpeaks.bed -b promoters.bed -wao -v > F_2TFs_distal_mergedpeaks.bed"
+sbcompute4.4 --wrap="bedtools intersect -a F_3TFs_mergedpeaks.bed -b promoters.bed -wao -v > F_3TFs_distal_mergedpeaks.bed"
+sbcompute4.4 --wrap="bedtools intersect -a F_4TFs_mergedpeaks.bed -b promoters.bed -wao -v > F_4TFs_distal_mergedpeaks.bed"
+sbcompute4.4 --wrap="bedtools intersect -a F_5TFs_mergedpeaks.bed -b promoters.bed -wao -v > F_5TFs_distal_mergedpeaks.bed"
+sbcompute4.4 --wrap="bedtools intersect -a F_6TFs_mergedpeaks.bed -b promoters.bed -wao -v > F_6TFs_distal_mergedpeaks.bed"
+sbcompute4.4 --wrap="bedtools intersect -a F_7TFs_mergedpeaks.bed -b promoters.bed -wao -v > F_7TFs_distal_mergedpeaks.bed"
+sbcompute4.4 --wrap="bedtools intersect -a F_1_2TFs_sorted.bed -b promoters.bed -wao -v > F_1_2TFs_distal_sorted.bed"
+sbcompute4.4 --wrap="bedtools intersect -a F_3_4TFs_sorted.bed -b promoters.bed -wao -v > F_3_4TFs_distal_sorted.bed"
+sbcompute4.4 --wrap="bedtools intersect -a F_multiTFs_sorted.bed -b promoters.bed -wao -v > F_multiTFs_distal_sorted.bed"
+
+
+
+# for adult  data
+sbcompute4.4 --wrap="bedtools intersect -a A_1TF_mergedpeaks.bed -b promoters.bed -wao -v > A_1TF_distal_mergedpeaks.bed"
+sbcompute4.4 --wrap="bedtools intersect -a A_2TFs_mergedpeaks.bed -b promoters.bed -wao -v > A_2TFs_distal_mergedpeaks.bed"
+sbcompute4.4 --wrap="bedtools intersect -a A_3TFs_mergedpeaks.bed -b promoters.bed -wao -v > A_3TFs_distal_mergedpeaks.bed"
+sbcompute4.4 --wrap="bedtools intersect -a A_4TFs_mergedpeaks.bed -b promoters.bed -wao -v > A_4TFs_distal_mergedpeaks.bed"
+sbcompute4.4 --wrap="bedtools intersect -a A_5TFs_mergedpeaks.bed -b promoters.bed -wao -v > A_5TFs_distal_mergedpeaks.bed"
+sbcompute4.4 --wrap="bedtools intersect -a A_6TFs_mergedpeaks.bed -b promoters.bed -wao -v > A_6TFs_distal_mergedpeaks.bed"
+sbcompute4.4 --wrap="bedtools intersect -a A_2_3TFs_sorted.bed -b promoters.bed -wao -v > A_2_3TFs_distal_sorted.bed"
+sbcompute4.4 --wrap="bedtools intersect -a A_multiTFs_sorted.bed -b promoters.bed -wao -v > A_multiTFs_distal_sorted.bed"
+
+
+
+# Convert to txt files, download, and open with excel to calculate lengths of TF-occupied regions
+pos2bed.pl F_1TF_distal_mergedpeaks.bed > F_1TF_distal_mergedpeaks.txt
+pos2bed.pl F_2TFs_distal_mergedpeaks.bed > F_2TFs_distal_mergedpeaks.txt
+pos2bed.pl F_3TFs_distal_mergedpeaks.bed > F_3TFs_distal_mergedpeaks.txt
+pos2bed.pl F_4TFs_distal_mergedpeaks.bed > F_4TFs_distal_mergedpeaks.txt
+pos2bed.pl F_5TFs_distal_mergedpeaks.bed > F_5TFs_distal_mergedpeaks.txt
+pos2bed.pl F_6TFs_distal_mergedpeaks.bed > F_6TFs_distal_mergedpeaks.txt
+pos2bed.pl F_7TFs_distal_mergedpeaks.bed > F_7TFs_distal_mergedpeaks.txt
+
+
+pos2bed.pl A_1TF_distal_mergedpeaks.bed > A_1TF_distal_mergedpeaks.txt
+pos2bed.pl A_2TFs_distal_mergedpeaks.bed > A_2TFs_distal_mergedpeaks.txt
+pos2bed.pl A_3TFs_distal_mergedpeaks.bed > A_3TFs_distal_mergedpeaks.txt
+pos2bed.pl A_4TFs_distal_mergedpeaks.bed > A_4TFs_distal_mergedpeaks.txt
+pos2bed.pl A_5TFs_distal_mergedpeaks.bed > A_5TFs_distal_mergedpeaks.txt
+pos2bed.pl A_6TFs_distal_mergedpeaks.bed > A_6TFs_distal_mergedpeaks.txt
+
+
+
+
+
+
+
+# STEP 4: Creating Heatmaps  
+
+### Fetal ATAC and EP300
+# create matrix
+sbcompute4.4 --wrap="computeMatrix reference-point --referencePoint center -S GSM3579629_rmchrM_nodup_RPKM.bw GSM3579630_rmchrM_nodup_RPKM.bw GSM2346444_rmchrM_nodup_RPKM.bw GSM2346445_rmchrM_nodup_RPKM.bw -R F_7TFs_distal_mergedpeaks.bed F_6TFs_distal_mergedpeaks.bed F_5TFs_distal_mergedpeaks.bed F_4TFs_distal_mergedpeaks.bed F_3TFs_distal_mergedpeaks.bed F_2TFs_distal_mergedpeaks.bed F_1TF_distal_mergedpeaks.bed --beforeRegionStartLength 1000 --afterRegionStartLength 1000 --skipZeros -o F_ATAC_EP300_aggplot.mat.gz"
+# use matrix to create intersection heatmap
+sbcompute4.4 --wrap="plotHeatmap -m F_ATAC_EP300_aggplot.mat.gz -out F_ATAC_EP300_aggplot_heatmap.pdf --plotTitle 'Fetal ATAC and EP300 ChIP-Seq Data' --samplesLabel 'ATAC rep1' 'ATAC rep2' 'EP300 rep1' 'EP300 rep2' --regionsLabel '7' '6' '5' '4' '3' '2' '1' --plotFileFormat pdf --legendLocation best"
+
+
+
+### Fetal Activating Histone Marks
+# create matrix
+sbcompute4.4 --wrap="computeMatrix reference-point --referencePoint center -S GSM2191196_rmchrM_nodup_RPKM.bw GSM2191197_rmchrM_nodup_RPKM.bw GSM2191741_rmchrM_nodup_RPKM.bw GSM2191742_rmchrM_nodup_RPKM.bw GSM2192145_rmchrM_nodup_RPKM.bw GSM2192146_rmchrM_nodup_RPKM.bw -R F_7TFs_distal_mergedpeaks.bed F_6TFs_distal_mergedpeaks.bed F_5TFs_distal_mergedpeaks.bed F_4TFs_distal_mergedpeaks.bed F_3TFs_distal_mergedpeaks.bed F_2TFs_distal_mergedpeaks.bed F_1TF_distal_mergedpeaks.bed --beforeRegionStartLength 1000 --afterRegionStartLength 1000 --skipZeros -o F_H3K27ac_H3K4me1_H3K4me3_aggplot.mat.gz"
+# use matrix to create intersection heatmap
+sbcompute4.4 --wrap="plotHeatmap -m F_H3K27ac_H3K4me1_H3K4me3_aggplot.mat.gz -out F_H3K27ac_H3K4me1_H3K4me3_aggplot_heatmap.pdf --plotTitle 'Fetal H3K27ac, H3K4me1, H3K4me3 ChIP-Seq Data' --samplesLabel 'H3K27ac rep1' 'H3K27ac rep2' 'H3K4me1 rep1' 'H3K4me1 rep2' 'H3K4me3 rep1' 'H3K4me3 rep2' --regionsLabel '7' '6' '5' '4' '3' '2' '1' --plotFileFormat pdf --legendLocation best"
+
+
+### Fetal H3K27me3
+# create matrix
+sbcompute4.4 --wrap="computeMatrix reference-point --referencePoint center -S GSM2191194_rmchrM_nodup_RPKM.bw GSM2191195_rmchrM_nodup_RPKM.bw -R F_7TFs_distal_mergedpeaks.bed F_6TFs_distal_mergedpeaks.bed F_5TFs_distal_mergedpeaks.bed F_4TFs_distal_mergedpeaks.bed F_3TFs_distal_mergedpeaks.bed F_2TFs_distal_mergedpeaks.bed F_1TF_distal_mergedpeaks.bed --beforeRegionStartLength 1000 --afterRegionStartLength 1000 --skipZeros -o F_H3K27me3_aggplot.mat.gz"
+# use matrix to create intersection heatmap
+sbcompute4.4 --wrap="plotHeatmap -m F_H3K27me3_aggplot.mat.gz -out F_H3K27me3_aggplot_heatmap.pdf --plotTitle 'Fetal H3K27me3' --samplesLabel 'H3K27me3 rep1' 'H3K27me3 rep2' --regionsLabel '7' '6' '5' '4' '3' '2' '1' --plotFileFormat pdf --legendLocation best"
+
+
+
+### Adult ATAC and EP300
+# create matrix
+sbcompute4.4 --wrap="computeMatrix reference-point --referencePoint center -S GSM2525597_rmchrM_nodup_RPKM.bw GSM2525598_rmchrM_nodup_RPKM.bw GSM722695_rmchrM_nodup_RPKM.bw GSM918747_rmchrM_nodup_RPKM.bw -R A_6TFs_distal_mergedpeaks.bed A_5TFs_distal_mergedpeaks.bed A_4TFs_distal_mergedpeaks.bed A_3TFs_distal_mergedpeaks.bed A_2TFs_distal_mergedpeaks.bed A_1TF_distal_mergedpeaks.bed --beforeRegionStartLength 1000 --afterRegionStartLength 1000 --skipZeros -o A_ATAC_EP300_aggplot.mat.gz"
+# use matrix to create intersection heatmap
+sbcompute4.4 --wrap="plotHeatmap -m A_ATAC_EP300_aggplot.mat.gz -out A_ATAC_EP300_aggplot_heatmap.pdf --plotTitle 'Adult ATAC and EP300 ChIP-Seq Data' --samplesLabel 'ATAC rep1' 'ATAC rep2' 'EP300 rep1' 'EP300 rep2' --regionsLabel '6' '5' '4' '3' '2' '1' --plotFileFormat pdf --legendLocation best"  
+
+
+
+### Adult Activating Histone Marks
+# create matrix
+sbcompute4.4 --wrap="computeMatrix reference-point --referencePoint center -S GSM1902461_rmchrM_nodup_RPKM.bw GSM1902462_rmchrM_nodup_RPKM.bw GSM722693_rmchrM_nodup_RPKM.bw GSM769025_rmchrM_nodup_RPKM.bw GSM722694_rmchrM_nodup_RPKM.bw GSM769017_rmchrM_nodup_RPKM.bw -R A_6TFs_distal_mergedpeaks.bed A_5TFs_distal_mergedpeaks.bed A_4TFs_distal_mergedpeaks.bed A_3TFs_distal_mergedpeaks.bed A_2TFs_distal_mergedpeaks.bed A_1TF_distal_mergedpeaks.bed --beforeRegionStartLength 1000 --afterRegionStartLength 1000 --skipZeros -o A_H3K27ac_H3K4me1_H3K4me3_aggplot.mat.gz"
+# use matrix to create intersection heatmap
+sbcompute4.4 --wrap="plotHeatmap -m A_H3K27ac_H3K4me1_H3K4me3_aggplot.mat.gz -out A_H3K27ac_H3K4me1_H3K4me3_aggplot_heatmap.pdf --plotTitle 'Adult H3K27ac, H3K4me1, and H3K4me3 ChIP-Seq Data' --samplesLabel 'H3K27ac rep1' 'H3K27ac rep2' 'H3K4me1 rep1' 'H3K4me1 rep2' 'H3K4me3 rep1' 'H3K4me3 rep2' --regionsLabel '6' '5' '4' '3' '2' '1' --plotFileFormat pdf --legendLocation best"
+
+
+### Adult H3K27me3
+# create matrix
+sbcompute4.4 --wrap="computeMatrix reference-point --referencePoint center -S GSM2461471_rmchrM_nodup_RPKM.bw GSM2461472_rmchrM_nodup_RPKM.bw -R A_6TFs_distal_mergedpeaks.bed A_5TFs_distal_mergedpeaks.bed A_4TFs_distal_mergedpeaks.bed A_3TFs_distal_mergedpeaks.bed A_2TFs_distal_mergedpeaks.bed A_1TF_distal_mergedpeaks.bed --beforeRegionStartLength 1000 --afterRegionStartLength 1000 --skipZeros -o A_H3K27me3_aggplot.mat.gz"
+# use matrix to create intersection heatmap
+sbcompute4.4 --wrap="plotHeatmap -m A_H3K27me3_aggplot.mat.gz -out A_H3K27me3_aggplot_heatmap.pdf --plotTitle 'Adult H3K27me3' --samplesLabel 'H3K27me3 rep1' 'H3K27me3 rep2' --regionsLabel '6' '5' '4' '3' '2' '1' --plotFileFormat pdf --legendLocation best"
+
+
+
+# SETP 5: Creating Intersection Plots on distal regions 
+
+# on all TF data, color
+intervene pairwise -i A_GATA4Summit200.bed A_MEF2ASummit200.bed A_NKX2_5Summit200.bed A_SRFSummit200.bed A_TEAD1Summit200.bed A_TBX5Summit200.bed F_GATA4Summit200.bed F_MEF2ASummit200.bed F_MEF2CSummit200.bed F_NKX2_5Summit200.bed F_SRFSummit200.bed F_TEAD1Summit200.bed F_TBX5Summit200.bed --filenames --compute frac --htype color --diagonal
+
+# on all TF data, show numbers (percentage overlap)
+intervene pairwise -i A_GATA4Summit200.bed A_MEF2ASummit200.bed A_NKX2_5Summit200.bed A_SRFSummit200.bed A_TEAD1Summit200.bed A_TBX5Summit200.bed F_GATA4Summit200.bed F_MEF2ASummit200.bed F_MEF2CSummit200.bed F_NKX2_5Summit200.bed F_SRFSummit200.bed F_TEAD1Summit200.bed F_TBX5Summit200.bed --filenames --compute frac --htype number --diagonal
+
+
+# On fetal data , color
+intervene pairwise -i F_ATACSummit200.bed F_EP300Summit200.bed F_H3K27acSummit200.bed F_H3K27me3Summit200.bed F_H3K4me1Summit200.bed F_H3K4me3Summit200.bed F_1_2TFs_distal_sorted.bed F_3_4TFs_distal_sorted.bed F_5_7_multiTFs_distal_sorted.bed --names ATAC,EP300,H3K27ac,H3K27me3,H3K4me1,H3K4me3,1-2TFs,3-4TFs,5-7TFs --compute frac --diagonal --htype color --title "Pairwise Intersection of Fetal Chromatin Features"
+
+# On fetal data , show numbers
+intervene pairwise -i F_ATACSummit200.bed F_EP300Summit200.bed F_H3K27acSummit200.bed F_H3K27me3Summit200.bed F_H3K4me1Summit200.bed F_H3K4me3Summit200.bed F_1_2TFs_distal_sorted.bed F_3_4TFs_distal_sorted.bed F_5_7_multiTFs_distal_sorted.bed --names ATAC,EP300,H3K27ac,H3K27me3,H3K4me1,H3K4me3,1-2TFs,3-4TFs,5-7TFs --compute frac --diagonal --htype number --title "Pairwise Intersection of Fetal Chromatin Features"
+
+
+# On adult data, color
+intervene pairwise -i A_ATACSummit200.bed A_EP300Summit200.bed A_H3K27acSummit200.bed A_H3K27me3Summit200.bed A_H3K4me1Summit200.bed A_H3K4me3Summit200.bed A_1TF_distal_mergedpeaks.bed A_2_3TFs_distal_sorted.bed A_4_6_multiTFs_distal_sorted.bed --names ATAC,EP300,H3K27ac,H3K27me3,H3K4me1,H3K4me3,1TF,2-3TFs,4-6TFs --compute frac --htype color --diagonal --title "Pairwise Intersection of Adult Chromatin Features"
+
+
+# On adult data, show numbers
+intervene pairwise -i A_ATACSummit200.bed A_EP300Summit200.bed A_H3K27acSummit200.bed A_H3K27me3Summit200.bed A_H3K4me1Summit200.bed A_H3K4me3Summit200.bed  A_1TF_distal_mergedpeaks.bed A_2_3TFs_distal_sorted.bed A_4_6_multiTFs_distal_sorted.bed --names ATAC,EP300,H3K27ac,H3K27me3,H3K4me1,H3K4me3,1TF,2-3TFs,4-6TFs --compute frac --htype number --diagonal --title "Pairwise Intersection of Adult Chromatin Features"
+
+
+
+
+# STEP 5: Creating Upset Plots
+
+# Fetal Marks
+intervene upset -i F_ATACSummit200.bed F_EP300Summit200.bed F_H3K27acSummit200.bed F_H3K27me3Summit200.bed F_H3K4me1Summit200.bed F_H3K4me3Summit200.bed F_1_2TFs_distal_sorted.bed F_3_4TFs_distal_sorted.bed F_5_7_multiTFs_distal_sorted.bed --names ATAC,EP300,H3K27ac,H3K27me3,H3K4me1,H3K4me3,1-2TFs,3-4TFs,5-7TFs --figtype pdf --type genomic
+
+# Adult Marks
+intervene upset -i A_ATACSummit200.bed A_EP300Summit200.bed A_H3K27acSummit200.bed A_H3K27me3Summit200.bed A_H3K4me1Summit200.bed A_H3K4me3Summit200.bed A_1TF_distal_mergedpeaks.bed A_2_3TFs_distal_sorted.bed A_4_6_multiTFs_distal_sorted.bed --names ATAC,EP300,H3K27ac,H3K27me3,H3K4me1,H3K4me3,1TF,2-3TFs,4-6TFs --figtype pdf --type genomic
+
+
+
+
+
+
+
+
